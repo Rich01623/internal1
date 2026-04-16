@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frost Transport Solutions | Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { frostNight: '#020617', frostSlate: '#0f172a' } } }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+        .sidebar-item { transition: all 0.2s ease; cursor: pointer; }
+        .sidebar-item:hover { background-color: #1e293b; }
+        .active-tab { background-color: #1e293b; border-left: 3px solid #3b82f6; }
+        .submenu-item { transition: all 0.2s ease; cursor: pointer; display: block; }
+        .submenu-item:hover { color: #ffffff; background-color: #1e293b; }
+        .rotate-180 { transform: rotate(180deg); }
+        .hidden { display: none; }
+        .dark body, .dark main { background-color: #020617 !important; }
+        .dark aside { background-color: #0f172a; }
+        .dark .frost-field { background: #0f172a !important; color: #ffffff !important; border: 1px solid #334155 !important; }
+        body:not(.dark) .frost-field { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; }
+        .client-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; border-left: 4px solid #2563eb; position: relative; }
+        .dark .client-card { background: #1e293b; border-color: #334155; }
+        .frost-field { width: 100%; padding: 12px; border-radius: 6px; font-size: 14px; outline: none; display: block; }
+        .label-text { font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-bottom: 6px; display: block; }
+        .dark .label-text { color: #94a3b8; }
+        .comms-link { transition: color 0.2s; }
+        .comms-link:hover { text-decoration: underline; color: #2563eb !important; }
+        .dark .comms-link:hover { color: #60a5fa !important; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 flex h-screen overflow-hidden">
+
+    <aside class="w-56 bg-[#0f172a] text-slate-300 flex flex-col flex-shrink-0 border-r border-slate-800">
+        <div class="p-4 border-b border-slate-800 flex items-center space-x-3">
+            <div class="bg-blue-600 p-1.5 rounded-lg"><i class="fas fa-truck-fast text-white text-sm"></i></div>
+            <div>
+                <h1 class="text-white text-xs font-bold uppercase tracking-wider leading-tight">Frost Transport</h1>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest italic">Operations</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 pt-4 overflow-y-auto">
+            <a href="#" onclick="showModule('welcome')" class="sidebar-item flex items-center px-4 py-2 mb-1 text-xs active-tab">
+                <i class="fas fa-desktop w-5 text-blue-400"></i><span>DASHBOARD</span>
+            </a>
+            
+            <div>
+                <button onclick="toggleSubmenu('tms-menu', 'tms-arrow')" class="w-full sidebar-item flex items-center justify-between px-4 py-2 mb-1 text-xs outline-none">
+                    <div class="flex items-center"><i class="fas fa-route w-5 text-slate-400"></i><span>TMS</span></div>
+                    <i id="tms-arrow" class="fas fa-chevron-down text-[10px] transition-transform"></i>
+                </button>
+                <div id="tms-menu" class="hidden bg-[#0a0f1d] pb-1">
+                    <a href="https://rich01623.github.io/Planner/" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">Planner</a>
+                    <a href="https://rich01623.github.io/ratetest/" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">Rate Card</a>
+                    <a href="https://rich01623.github.io/FTS-Customer-Portal/" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">QTS Rates</a>
+                    <a href="https://rich01623.github.io/lasershape/" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">LaserShape</a>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="toggleSubmenu('crm-menu', 'crm-arrow')" class="w-full sidebar-item flex items-center justify-between px-4 py-2 mb-1 text-xs outline-none">
+                    <div class="flex items-center"><i class="fas fa-users w-5 text-slate-400"></i><span>CRM</span></div>
+                    <i id="crm-arrow" class="fas fa-chevron-down text-[10px] transition-transform"></i>
+                </button>
+                <div id="crm-menu" class="hidden bg-[#0a0f1d] pb-1">
+                    <a href="#" onclick="showModule('clients')" class="submenu-item pl-10 py-2 text-[11px]">Database</a>
+                    <a href="#" onclick="showModule('add-client')" class="submenu-item pl-10 py-2 text-[11px]">Add New Client</a>
+                    <a href="https://rich01623.github.io/fts-directory/" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">Directory</a>
+                </div>
+            </div>
+
+            <div>
+                <button onclick="toggleSubmenu('pf-menu', 'pf-arrow')" class="w-full sidebar-item flex items-center justify-between px-4 py-2 mb-1 text-xs outline-none">
+                    <div class="flex items-center"><i class="fas fa-box w-5 text-slate-400"></i><span>PALLETFORCE</span></div>
+                    <i id="pf-arrow" class="fas fa-chevron-down text-[10px] transition-transform"></i>
+                </button>
+                <div id="pf-menu" class="hidden bg-[#0a0f1d] pb-1">
+                    <a href="https://palletforce.net/Login.aspx" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">Login</a>
+                    <a href="https://rich01623.github.io/jonstool/" target="main_frame" onclick="showModule('iframe', this.href)" class="submenu-item pl-10 py-2 text-[11px]">PF Planner</a>
+                </div>
+            </div>
+
+            <div class="px-4 mt-6 mb-2 text-[10px] font-black uppercase text-slate-600">Operations</div>
+            <a href="https://rich01623.github.io/Fleet-dash/" target="main_frame" onclick="showModule('iframe', this.href)" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-id-card w-5"></i><span>TIMESHEETS</span></a>
+            <a href="https://rich01623.github.io/Maintenance/" target="main_frame" onclick="showModule('iframe', this.href)" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-gas-pump w-5"></i><span>MAINTENANCE</span></a>
+            
+            <a href="#" onclick="showModule('staff-profiles')" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-user-tie w-5 text-amber-500"></i><span>STAFF PROFILES</span></a>
+            <a href="#" onclick="resetStaffForm(); showModule('add-staff')" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-user-plus w-5 text-blue-400"></i><span>ADD NEW STAFF</span></a>
+            <a href="#" onclick="showModule('holiday-calendar')" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-calendar-check w-5 text-emerald-500"></i><span>HOLIDAY CALENDAR</span></a>
+            <a href="#" onclick="showModule('invoices')" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-file-invoice w-5 text-slate-400"></i><span>INVOICES</span></a>
+            <a href="#" onclick="showModule('manual-invoice')" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-file-signature w-5 text-blue-400"></i><span>CREATE MANUAL INVOICE</span></a>
+            
+            <a href="https://login.xero.com/" target="_blank" class="sidebar-item flex items-center px-4 py-2 text-xs"><i class="fas fa-file-invoice-dollar w-5"></i><span>XERO</span></a>
+        </nav>
+
+        <div class="p-2 border-t border-slate-800">
+            <button onclick="toggleSettings()" class="w-full sidebar-item flex items-center px-4 py-2 text-xs rounded-md">
+                <i class="fas fa-moon w-5 text-slate-400"></i><span>NIGHT MODE</span>
+            </button>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col min-w-0">
+        <header class="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6">
+            <h2 class="text-xs font-black uppercase tracking-widest text-slate-500 italic">Nottingham HQ Hub</h2>
+            <div class="flex items-center space-x-4">
+                <span id="live-clock" class="text-xs font-mono font-bold dark:text-slate-400">00:00:00</span>
+                <div class="h-6 w-12 bg-red-600 rounded flex items-center justify-center text-[10px] text-white font-black italic shadow-lg">FTS</div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-auto p-6">
+            <div id="mod-welcome" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-[#0f172a] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden h-[500px]">
+                        <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <h3 class="text-[10px] font-black uppercase italic text-blue-500">Live Weather Radar</h3>
+                        </div>
+                        <iframe src="https://www.meteoblue.com/en/weather/maps/widget/nottingham_united-kingdom_2641170?satellite=1&cloudsAndPrecipitation=1&geoloc=fixed&tempunit=C&windunit=mph&zoom=6" frameborder="0" style="width: 100%; height: 90%;"></iframe>
+                    </div>
+                    <div class="bg-white dark:bg-[#0f172a] rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden h-[500px]">
+                        <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <h3 class="text-[10px] font-black uppercase italic text-red-600">Road Traffic (Live)</h3>
+                        </div>
+                        <iframe src="https://www.tomtom.com/map/nottingham-uk/traffic/" class="w-full h-full border-none" style="margin-top: -60px;"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <iframe id="mod-iframe" name="main_frame" src="about:blank" class="hidden w-full h-full rounded border-none shadow-2xl"></iframe>
+            
+            <div id="mod-clients" class="hidden">
+                 <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-black italic uppercase dark:text-white">Customer Database</h2>
+                    <input type="text" id="clientSearch" onkeyup="filterClients()" placeholder="Search..." class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs px-4 py-2 rounded dark:text-white outline-none">
+                </div>
+                <div id="client-container" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+
+            <div id="mod-add-client" class="hidden max-w-2xl mx-auto">
+                 <div class="bg-white dark:bg-[#0f172a] rounded-lg p-8 border-t-4 border-blue-600 shadow-xl">
+                    <h2 class="text-xs font-black uppercase mb-8 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2 italic tracking-widest">Add New Client</h2>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="col-span-2"><label class="label-text">Company Name</label><input type="text" id="new-coname" class="frost-field"></div>
+                        <div><label class="label-text">Town</label><input type="text" id="new-town" class="frost-field"></div>
+                        <div><label class="label-text">Postcode</label><input type="text" id="new-pcode" class="frost-field"></div>
+                        <div><label class="label-text">Phone</label><input type="text" id="new-phone" class="frost-field"></div>
+                        <div><label class="label-text">Email</label><input type="email" id="new-email" class="frost-field"></div>
+                    </div>
+                    <button onclick="saveClient()" class="w-full mt-10 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded uppercase text-xs tracking-widest transition-all">Store Record</button>
+                 </div>
+            </div>
+
+            <div id="mod-staff-profiles" class="hidden">
+                <h2 class="text-xl font-black italic uppercase dark:text-white">Staff Profiles</h2>
+                <div id="staff-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"></div>
+            </div>
+
+            <div id="mod-add-staff" class="hidden max-w-3xl mx-auto">
+                <div class="bg-white dark:bg-[#0f172a] rounded-lg p-8 border-t-4 border-amber-500 shadow-xl">
+                    <h2 id="staff-form-title" class="text-xs font-black uppercase mb-8 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2 italic tracking-widest">Register New Staff Member</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2"><label class="label-text">Full Name</label><input type="text" id="st-name" class="frost-field" placeholder="e.g. John Smith"></div>
+                        <div><label class="label-text">Age</label><input type="number" id="st-age" class="frost-field"></div>
+                        <div><label class="label-text">Job Title</label><input type="text" id="st-job" class="frost-field" placeholder="e.g. HGV Driver"></div>
+                        <div><label class="label-text">Contact Number</label><input type="text" id="st-phone" class="frost-field"></div>
+                        <div><label class="label-text">Email Address</label><input type="email" id="st-email" class="frost-field"></div>
+                        <div class="md:col-span-2"><label class="label-text">Home Address</label><input type="text" id="st-address" class="frost-field"></div>
+                        <div class="md:col-span-2"><label class="label-text">Licences Held</label><input type="text" id="st-licences" class="frost-field" placeholder="e.g. Class 1, Class 2, ADR, CPC"></div>
+                    </div>
+                    <button id="st-save-btn" onclick="saveStaff()" class="w-full mt-10 bg-amber-500 hover:bg-amber-600 text-white font-black py-4 rounded uppercase text-xs tracking-widest transition-all shadow-lg">Commit to Personnel File</button>
+                    <button id="st-cancel-btn" onclick="showModule('staff-profiles')" class="hidden w-full mt-2 bg-slate-500 hover:bg-slate-600 text-white font-black py-2 rounded uppercase text-[10px] tracking-widest">Cancel Edit</button>
+                </div>
+            </div>
+
+            <div id="mod-holiday-calendar" class="hidden"><h2 class="text-xl font-black italic uppercase dark:text-white">Holiday Calendar</h2></div>
+            <div id="mod-invoices" class="hidden"><h2 class="text-xl font-black italic uppercase dark:text-white">Invoices</h2></div>
+            <div id="mod-manual-invoice" class="hidden"><h2 class="text-xl font-black italic uppercase dark:text-white">Create Manual Invoice</h2></div>
+        </main>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://tdrzytgiqvdulityqttr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkcnp5dGdpcXZkdWxpdHlxdHRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNTM5NTMsImV4cCI6MjA4ODcyOTk1M30.XN46i7u6STD-2afmN7-Jh1MltADGpEuWlLt_n7wknbA';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let allClients = [];
+        let allStaff = [];
+        let editingStaffId = null;
+
+        window.onload = function() {
+            updateTime(); setInterval(updateTime, 1000);
+            showModule(localStorage.getItem('frost_last_module') || 'welcome');
+        };
+
+        function updateTime() { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-GB'); }
+
+        function showModule(modId, url = null) {
+            ['mod-welcome', 'mod-iframe', 'mod-clients', 'mod-add-client', 'mod-staff-profiles', 'mod-add-staff', 'mod-holiday-calendar', 'mod-invoices', 'mod-manual-invoice'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            
+            const activeMod = document.getElementById('mod-' + modId);
+            if(activeMod) activeMod.classList.remove('hidden');
+
+            if (modId === 'iframe' && url) document.getElementById('mod-iframe').src = url;
+            if (modId === 'clients') fetchClients();
+            if (modId === 'staff-profiles') fetchStaff();
+            
+            localStorage.setItem('frost_last_module', modId);
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active-tab'));
+        }
+
+        async function fetchClients() {
+            const container = document.getElementById('client-container');
+            container.innerHTML = '<div class="col-span-full text-center py-20 text-blue-500 uppercase text-xs font-bold animate-pulse tracking-widest">SYNCING CRM...</div>';
+            const { data, error } = await _supabase.from('crm_customer').select('*').order('coname', { ascending: true });
+            if (!error) { allClients = data; renderClients(data); }
+        }
+
+        function renderClients(data) {
+            const container = document.getElementById('client-container');
+            container.innerHTML = data.map(c => `
+                <div class="client-card">
+                    <h4 class="text-slate-900 dark:text-white font-black uppercase text-[11px] truncate italic border-b border-slate-100 dark:border-slate-700 pb-2 mb-2">${c.coname || 'UNKNOWN'}</h4>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><span class="text-slate-400 font-bold uppercase tracking-tighter">Town</span><span class="text-slate-600 dark:text-slate-300 font-semibold">${c.town || '-'}</span></div>
+                        <div class="flex justify-between text-[10px]"><span class="text-slate-400 font-bold uppercase tracking-tighter">P-Code</span><span class="text-slate-600 dark:text-slate-300 font-mono">${c.pcode || '-'}</span></div>
+                        <div class="flex justify-between text-[10px] border-t border-slate-100 dark:border-slate-800 pt-1 mt-1 font-bold">
+                            <span class="text-blue-500 uppercase">Tel</span>
+                            <a href="tel:${c.phone}" class="comms-link text-blue-600 dark:text-blue-400">${c.phone || '-'}</a>
+                        </div>
+                    </div>
+                </div>`).join('');
+        }
+
+        function filterClients() {
+            const query = document.getElementById('clientSearch').value.toLowerCase();
+            renderClients(allClients.filter(c => c.coname.toLowerCase().includes(query) || (c.town && c.town.toLowerCase().includes(query))));
+        }
+
+        async function saveClient() {
+            const payload = {
+                coname: document.getElementById('new-coname').value,
+                town: document.getElementById('new-town').value,
+                pcode: document.getElementById('new-pcode').value.toUpperCase(),
+                phone: document.getElementById('new-phone').value,
+                email: document.getElementById('new-email').value
+            };
+            const { error } = await _supabase.from('crm_customer').insert([payload]);
+            if(!error) { alert("Stored Successfully"); showModule('clients'); }
+        }
+
+        async function fetchStaff() {
+            const container = document.getElementById('staff-container');
+            container.innerHTML = '<div class="col-span-full text-center py-20 text-amber-500 uppercase text-xs font-bold animate-pulse tracking-widest">LOADING PERSONNEL FILES...</div>';
+            const { data, error } = await _supabase.from('staff_profiles').select('*').order('name', { ascending: true });
+            if (!error) { 
+                allStaff = data;
+                container.innerHTML = data.map(s => `
+                    <div class="client-card" style="border-left-color: #f59e0b;">
+                        <div class="absolute top-2 right-2 flex space-x-1">
+                            <button onclick="editStaff(${s.id})" class="p-1 text-slate-400 hover:text-amber-500 transition-colors"><i class="fas fa-edit text-[10px]"></i></button>
+                            <button onclick="deleteStaff(${s.id}, '${s.name}')" class="p-1 text-slate-400 hover:text-red-500 transition-colors"><i class="fas fa-trash text-[10px]"></i></button>
+                        </div>
+                        <h4 class="text-slate-900 dark:text-white font-black uppercase text-[11px] italic border-b border-slate-100 dark:border-slate-700 pb-2 mb-2 pr-12">${s.name}</h4>
+                        <div class="space-y-1 text-[10px]">
+                            <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase">Role</span><span class="text-amber-500 font-black">${s.job_title || '-'}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase">Licences</span><span class="text-slate-600 dark:text-slate-300">${s.licences_held || '-'}</span></div>
+                            <div class="flex justify-between pt-1 mt-1 border-t border-slate-100 dark:border-slate-800 font-bold">
+                                <a href="tel:${s.contact_number}" class="text-blue-500">${s.contact_number || '-'}</a>
+                                <a href="mailto:${s.email_address}" class="text-slate-400 italic">Email</a>
+                            </div>
+                        </div>
+                    </div>`).join('');
+            }
+        }
+
+        function resetStaffForm() {
+            editingStaffId = null;
+            document.getElementById('staff-form-title').innerText = "Register New Staff Member";
+            document.getElementById('st-save-btn').innerText = "Commit to Personnel File";
+            document.getElementById('st-cancel-btn').classList.add('hidden');
+            ['st-name', 'st-age', 'st-job', 'st-phone', 'st-email', 'st-address', 'st-licences'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        async function editStaff(id) {
+            const staff = allStaff.find(s => s.id === id);
+            if (!staff) return;
+            editingStaffId = id;
+            document.getElementById('staff-form-title').innerText = "Update Record: " + staff.name;
+            document.getElementById('st-save-btn').innerText = "Save Changes";
+            document.getElementById('st-cancel-btn').classList.remove('hidden');
+
+            document.getElementById('st-name').value = staff.name || '';
+            document.getElementById('st-age').value = staff.age || '';
+            document.getElementById('st-job').value = staff.job_title || '';
+            document.getElementById('st-phone').value = staff.contact_number || '';
+            document.getElementById('st-email').value = staff.email_address || '';
+            document.getElementById('st-address').value = staff.address || '';
+            document.getElementById('st-licences').value = staff.licences_held || '';
+
+            showModule('add-staff');
+        }
+
+        async function deleteStaff(id, name) {
+            if (confirm(`Are you sure you want to delete ${name} from the database?`)) {
+                const { error } = await _supabase.from('staff_profiles').delete().eq('id', id);
+                if (error) alert("Error deleting: " + error.message);
+                else fetchStaff();
+            }
+        }
+
+        async function saveStaff() {
+            const payload = {
+                name: document.getElementById('st-name').value,
+                age: document.getElementById('st-age').value,
+                job_title: document.getElementById('st-job').value,
+                contact_number: document.getElementById('st-phone').value,
+                email_address: document.getElementById('st-email').value,
+                address: document.getElementById('st-address').value,
+                licences_held: document.getElementById('st-licences').value
+            };
+
+            let result;
+            if (editingStaffId) {
+                result = await _supabase.from('staff_profiles').update(payload).eq('id', editingStaffId);
+            } else {
+                result = await _supabase.from('staff_profiles').insert([payload]);
+            }
+
+            if(result.error) {
+                alert("Error: " + result.error.message);
+            } else {
+                alert(editingStaffId ? "Personnel File Updated" : "Personnel File Created Successfully");
+                resetStaffForm();
+                showModule('staff-profiles');
+            }
+        }
+
+        function toggleSubmenu(id, arrowId) {
+            document.getElementById(id).classList.toggle('hidden');
+            document.getElementById(arrowId).classList.toggle('rotate-180');
+        }
+
+        function toggleSettings() { document.documentElement.classList.toggle('dark'); }
+    </script>
+</body>
+</html>
